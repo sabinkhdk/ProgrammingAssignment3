@@ -3,9 +3,9 @@ best <- function(state, outcome) {
   rawData <- read.csv("outcome-of-care-measures.csv", colClasses = "character")
   ## Check that state and outcome are valid
   stName <- rawData[,7]
-  outcome_2_check <- c("Heart attack","Heart Failure","Pneumonia")
+  outcome_2_check <- c("heart attack","heart failure","pneumonia")
   ## Check if valid state Name.. Should be American state with two character.
-  if((state %in% stName)==FALSE {
+  if((state %in% stName)==FALSE) {
     stop(print("ERROR!!! invalid state"))
   }
   ## Check if valid outcome selected
@@ -22,11 +22,17 @@ best <- function(state, outcome) {
   else if(outcome %in% outcome_2_check[3]==TRUE){
     col <- 23
   }
-  new.data <- rawdata[data$State==state,]
-  nData <- new.data[!is.na(new.data[,col]),]
-  ## Find minimum
-  pos <- which.min(nData[,col])
-  HName <- nData[pos,"Hospital.Name"]
+  ## Subset of data
+  new.data <- rawData[rawData$State==state,]
+  ## outcome column data
+  nData <- as.numeric(new.data[,col])
+  missing <- is.na(nData)
+  wData <- new.data[!missing, ]
+  # to get minimum values
+  pdata <- as.numeric(wData[, col])
+  pos <- which.min(pdata)
+  HName <- wData[pos,"Hospital.Name"]
+  # Sort in case of tie
   SortName <- sort(HName, decreasing = FALSE)
   ## Return hospital name in that state with lowest 30-day death
   ## rate
